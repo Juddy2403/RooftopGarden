@@ -1,0 +1,17 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "Socket Preview Plugin",
+  "Description": "Add preview StaticMesh to Persona socket using custom attach logic (live update).",
+  "Category": "Animation",
+  "CreatedBy": "Me",
+  "EnabledByDefault": true,
+  "Modules": [
+    {
+      "Name": "SocketPreviewPlugin",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
+    }
+  ]
+}

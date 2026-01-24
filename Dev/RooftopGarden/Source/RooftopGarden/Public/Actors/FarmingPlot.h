@@ -74,9 +74,6 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category="Default")
 	TObjectPtr<UStaticMeshComponent> PlotMesh;
 
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category="Default")
-	bool bHasBeenWatered = false;
-	
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category="Default")
 	bool bHasPlant = false;
 
@@ -98,9 +95,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 private:
-	UFUNCTION()
-	void OnDayPassed();
-
 	UFUNCTION()
 	FText GetErrorMessage(FSlotStruct HeldItem) const;
 	

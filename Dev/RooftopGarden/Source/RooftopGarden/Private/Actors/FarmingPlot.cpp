@@ -58,7 +58,7 @@ EPlotInteractions AFarmingPlot::GetCurrentInteraction_Implementation(FSlotStruct
 	{
 		if (HeldItem.ItemID.Compare("tiller") == 0 && PlantWeedComponent->HasWeeds()) return EPlotInteractions::weed;
 		if (HeldItem.ItemID.Compare("tiller") == 0 && bHasDeadPlant) return EPlotInteractions::clearDeadPlant;
-		if (HeldItem.ItemID.Compare("watering_can") == 0 && !bHasBeenWatered) return EPlotInteractions::water;
+		if (HeldItem.ItemID.Compare("watering_can") == 0 && !PlantWateringComponent->bHasBeenWatered) return EPlotInteractions::water;
 		if (HeldItem.ItemID.Compare("shovel") == 0 && !bHasPlant && !PlotPloughComponent->HasBeenPloughed())
 			return
 				EPlotInteractions::plough;
@@ -105,7 +105,6 @@ void AFarmingPlot::Interact_Implementation(AActor* InteractingActor, FSlotStruct
 			SetComponentsActive(true);
 			InventoryComp->RemoveFromActiveSlot(1);
 			PlantGrowthComponent->UpdatePlantInfo(PlantInfoStruct);
-			if (bHasBeenWatered) PlantWateringComponent->Water();
 			bHasPlant = true;
 			CurrentProduceID = PlantInfoStruct.ProduceID;
 		}
@@ -134,10 +133,7 @@ void AFarmingPlot::Interact_Implementation(AActor* InteractingActor, FSlotStruct
 void AFarmingPlot::BeginPlay()
 {
 	Super::BeginPlay();
-	GetWorld()->GetSubsystem<UTimeSubsystem>()->OnDayEnded.AddUniqueDynamic(this, &AFarmingPlot::OnDayPassed);
 	PlantHealthComponent->OnDeath.AddUniqueDynamic(this, &AFarmingPlot::OnPlantDeath);
-
-	//if (!IsValid(this) || this->IsPendingKillPending()) return;
 	PlantGrowthComponent->OnMeshUpdated.AddUniqueDynamic(this, &AFarmingPlot::UpdatePlantMesh);
 }
 
@@ -155,11 +151,6 @@ void AFarmingPlot::UpdatePlantMesh(UStaticMesh* NewMesh)
 	CropBox->SetRelativeLocation(PlantMesh->GetRelativeLocation() + FVector(0.f, 0.f, LocalBounds.BoxExtent.Z));
 }
 
-void AFarmingPlot::OnDayPassed()
-{
-	bHasBeenWatered = false;
-}
-
 FText AFarmingPlot::GetErrorMessage(FSlotStruct HeldItem) const
 {
 	if (!bHasPlant && !bHasDeadPlant && HeldItem.ItemType == EItemType::Seed && !PlotPloughComponent->HasBeenPloughed())
@@ -169,7 +160,7 @@ FText AFarmingPlot::GetErrorMessage(FSlotStruct HeldItem) const
 	{
 		if (HeldItem.ItemID.Compare("tiller") == 0 && !PlantWeedComponent->HasWeeds() && !bHasDeadPlant) 
 			return FText::FromString("No weeds");
-		if (HeldItem.ItemID.Compare("watering_can") == 0 && bHasBeenWatered)
+		if (HeldItem.ItemID.Compare("watering_can") == 0 && PlantWateringComponent->bHasBeenWatered)
 			return FText::FromString("Soil is already watered");
 		if (HeldItem.ItemID.Compare("shovel") == 0 && !bHasPlant && PlotPloughComponent->HasBeenPloughed())
 			return FText::FromString("Soil is already ploughed");

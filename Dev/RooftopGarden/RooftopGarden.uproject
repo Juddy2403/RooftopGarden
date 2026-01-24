@@ -42,6 +42,10 @@
 		{
 			"Name": "GPULightmass",
 			"Enabled": true
+		},
+		{
+			"Name": "AIAssistant",
+			"Enabled": true
 		}
 	]
 }
